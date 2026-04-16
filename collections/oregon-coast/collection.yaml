@@ -6,19 +6,21 @@ resolution: 720p
 style_token: KALPA_COAST
 
 training:
-  rank: 32
-  alpha: 32
+  rank: 64
+  alpha: 64
   dropout: 0.0
-  steps: 500
+  steps: 2000
   learning_rate: 5.0e-5
   scheduler_type: cosine
   optimizer_type: adamw
   batch_size: 1
   gradient_accumulation_steps: 4
-  # Resolution bucket: 512x288 @ 121 frames — reduced from 960x544 for pipeline validation
-  # 512 and 288 are both multiples of 32 (required by process_dataset.py)
-  # Matches validation sample dims; bump back to 960x544x121 once runs are confirmed healthy
-  resolution_bucket: "512x288x121"
+  # Resolution bucket: 960x544 is the native LTX-2.3 training resolution (per Lightricks example configs).
+  # 49 frames = 8×6+1, valid frame count, matches Lightricks' recommended training spec for style LoRAs.
+  # To change: update this value and re-run the training pipeline. Both dimensions must be multiples
+  # of 32; frame count must satisfy frames % 8 == 1 (valid: 9,17,25,33,41,49,57,65,73,81,89,97,121).
+  # 960x544x121 would match inference length exactly but ~3-4x slower preprocessing with no style benefit.
+  resolution_bucket: "960x544x49"
 
 artifacts:
   lora_gcs: null          # filled by training script
