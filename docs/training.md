@@ -117,8 +117,18 @@ Precomputes video latents and text embeddings. This is the most disk-intensive s
 output lives in `processed/.precomputed/` with subdirectories for `latents/`,
 `conditions/`, and `audio_latents/`.
 
-The resolution bucket `960x544x121` means: width 960, height 544, 121 frames. Both
-dimensions must be multiples of 32. Frame count must satisfy `frames % 8 == 1`.
+**Resolution bucket** — set in `collections/{name}/collection.yaml` under `training.resolution_bucket`.
+The current value is `960x544x49`:
+
+- `960x544` is the native LTX-2.3 training resolution per Lightricks' official example configs.
+  Training at a different spatial resolution causes a mismatch with inference (which runs at 960×544
+  pre-upscale), resulting in degraded/"crunchy" output quality.
+- `49` frames is Lightricks' recommended training frame count for style LoRAs. Using 121 frames
+  (to match inference length) would increase preprocessing time ~3–4× with no style quality benefit.
+
+**To change the resolution bucket:** edit `resolution_bucket` in `collection.yaml` and retrain.
+Constraints: both spatial dimensions must be multiples of 32; frame count must satisfy
+`frames % 8 == 1` (valid counts: 9, 17, 25, 33, 41, 49, 57, 65, 73, 81, 89, 97, 121).
 
 ### Step 6 — Train LoRA
 
@@ -222,6 +232,21 @@ Once you've finished debugging, manually terminate the pod:
 
 ## Monitoring Training
 
+### WandB (primary — visual monitoring)
+
+Training logs to the `kalpa` project on WandB. Open your dashboard at **wandb.ai** and navigate
+to the `kalpa` project to see:
+
+- **Loss curve** — updated every step
+- **Validation clips** — generated every 200 steps at 960×544×49; these are your best signal
+  for whether the LoRA is learning the right aesthetic. Expect meaningful style to emerge around
+  step 600–800.
+- **Run name** — `{collection}-{timestamp}`, e.g. `oregon-coast-20260417-143022`
+
+Requires `WANDB_API_KEY` in `.env`. The pod picks it up automatically.
+
+### Log tailing (secondary — raw output)
+
 To tail logs while training is in progress:
 
 ```bash
@@ -235,7 +260,7 @@ To check whether training is still running:
 ```
 
 Training progress is logged to stdout on the pod. Key lines to watch:
-- `Step N/1500, loss: X.XXXX` — training is progressing
+- `Step N/2000, loss: X.XXXX` — training is progressing
 - `Uploading lora.safetensors to GCS...` — training finished, upload in progress
 - `Self-terminating...` — all done
 
