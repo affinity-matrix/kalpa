@@ -1,0 +1,33 @@
+name: oregon-coast
+description: Oregon coastline drone footage, golden hour
+hf_dataset: Overlaiai/OregonCoastin4K
+hf_split: train
+resolution: 720p
+style_token: KALPA_COAST
+
+training:
+  rank: 32
+  alpha: 32
+  dropout: 0.0
+  steps: 500
+  learning_rate: 5.0e-5
+  scheduler_type: cosine
+  optimizer_type: adamw
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  # Resolution bucket: 512x288 @ 121 frames — reduced from 960x544 for pipeline validation
+  # 512 and 288 are both multiples of 32 (required by process_dataset.py)
+  # Matches validation sample dims; bump back to 960x544x121 once runs are confirmed healthy
+  resolution_bucket: "512x288x121"
+
+artifacts:
+  lora_gcs: null          # filled by training script
+  shelby_lora: null       # filled by training script
+  shelby_metadata: null   # filled by training script
+
+default_prompts:
+  video: "KALPA_COAST aerial coastline, dramatic cliffs, ocean waves crashing on basalt, golden hour light"
+
+x402:
+  inference_price_apt: 0.01
+  lora_access_price_apt: null   # null = ungated; set in v2
