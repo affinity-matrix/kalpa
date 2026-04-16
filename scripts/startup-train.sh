@@ -259,7 +259,7 @@ data:
 validation:
   prompts:
     - "${STYLE_TOKEN} aerial coastline, dramatic cliffs, ocean waves"
-  video_dims: [512, 288, 49]
+  video_dims: [960, 544, 49]
   interval: ${TRAIN_VAL_INTERVAL}
   guidance_scale: 4.0
 
@@ -271,7 +271,9 @@ checkpoints:
 output_dir: "${WORK_DIR}/training-output"
 
 wandb:
-  enabled: false
+  enabled: true
+  project: "kalpa"
+  run_name: "${COLLECTION}-$(date +%Y%m%d-%H%M%S)"
 EOF
 
 # --- Run training ---

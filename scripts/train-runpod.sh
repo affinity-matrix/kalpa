@@ -64,6 +64,7 @@ env_vars = [
     {'key': 'SHELBY_WALLET_ADDRESS',  'value': '${SHELBY_WALLET_ADDRESS}'},
     {'key': 'RUNPOD_API_KEY',         'value': '${RUNPOD_API_KEY}'},
     {'key': 'GCP_SA_KEY_B64',         'value': '${GCP_SA_KEY_B64}'},
+    {'key': 'WANDB_API_KEY',          'value': '${WANDB_API_KEY:-}'},
 ]
 env_gql = '[' + ', '.join(
     '{key: ' + json.dumps(e['key']) + ', value: ' + json.dumps(e['value']) + '}'
@@ -200,6 +201,7 @@ export SHELBY_WALLET_PRIVKEY="${SHELBY_WALLET_PRIVKEY}"
 export SHELBY_WALLET_ADDRESS="${SHELBY_WALLET_ADDRESS}"
 export RUNPOD_API_KEY="${RUNPOD_API_KEY}"
 export RUNPOD_POD_ID="${POD_ID}"
+export WANDB_API_KEY="${WANDB_API_KEY:-}"
 
 nohup /tmp/startup-train.sh > /var/log/kalpa-train.log 2>&1 &
 disown \$!

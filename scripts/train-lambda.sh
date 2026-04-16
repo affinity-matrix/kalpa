@@ -82,6 +82,7 @@ export SHELBY_WALLET_PRIVKEY="${SHELBY_WALLET_PRIVKEY}"
 export SHELBY_WALLET_ADDRESS="${SHELBY_WALLET_ADDRESS}"
 export LAMBDA_API_KEY="${LAMBDA_API_KEY}"
 export LAMBDA_INSTANCE_NAME="${INSTANCE_NAME}"
+export WANDB_API_KEY="${WANDB_API_KEY:-}"
 
 # Download and run the training script
 gcloud storage cp "${SCRIPTS_GCS}/startup-train.sh" /tmp/startup-train.sh
